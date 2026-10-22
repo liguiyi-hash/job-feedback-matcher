@@ -1,0 +1,16 @@
+.git/
+.model-venv/
+node_modules/
+__pycache__/
+*.pyc
+.DS_Store
+models/*
+!models/LICENSE-FlagEmbedding.txt
+qa/
+outputs/
+*.log
+*.zip
+*.xlsx
+!examples/sample.xlsx
+.env
+.env.*

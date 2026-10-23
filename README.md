@@ -1,6 +1,6 @@
 # 岗位反馈匹配助手
 
-**贵毅_TUFE** · 作品展示版 2.0.0+portfolio.1  
+**贵毅_TUFE** · 作品展示版 2.0.0+portfolio.2  
 [GitHub 项目来源](https://github.com/liguiyi-hash/job-feedback-matcher) · [版本说明](CHANGELOG.md)
 
 从候选人已经收到的部门反馈中选取较合适的一项，批量输出部门、岗位和面试官。基于用户提供的「岗位反馈匹配助手.zip」整理，不是前一个候选人管理平台。
@@ -20,6 +20,10 @@
 ![程序界面](docs/images/preview.png)
 
 页面显示贵毅_TUFE和GitHub来源，面板、页脚及角落保留水印；不遮挡表格和按钮。第一方代码内部保留署名。Excel每条结果带版本水印和批次号，程序信息页及工作簿作者属性同步标记。
+
+## 源码包与本机使用包
+
+GitHub源码包仅含代码和虚构样例，体积小，需要本机Python3.11+并首次联网安装依赖。带.runtime目录的Mac Apple Silicon本机使用包包含Python、依赖和模型，无需另外安装Python，直接双击启动。本机使用包不适用于Intel Mac或Windows。
 
 ## 启动
 

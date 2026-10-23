@@ -25,5 +25,5 @@
   const peers=shortlist.filter(c=>c.job===top.job&&c.business===top.business);
   return {...result,selected:earliest(peers).index,reason:'语义补充排序，同岗位同业务取最早'};
  }
- const api={match,earliest,version:'2.0.0+portfolio.1'};root.FinalMatcher=api;if(typeof module!=='undefined')module.exports=api;
+ const api={match,earliest,version:'2.0.0+portfolio.2'};root.FinalMatcher=api;if(typeof module!=='undefined')module.exports=api;
 })(typeof globalThis!=='undefined'?globalThis:this);

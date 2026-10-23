@@ -2,7 +2,7 @@
 """检测清单中记录的文件是否被修改；不提供密码学身份认证。"""
 from pathlib import Path
 import hashlib, json
-IGNORE={'.git','.model-venv','node_modules','__pycache__','models'}
+IGNORE={'.git','.runtime','.model-venv','node_modules','__pycache__','models'}
 def entries(base):
     result={}
     for p in sorted(base.rglob('*')):

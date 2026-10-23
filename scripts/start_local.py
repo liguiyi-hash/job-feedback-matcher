@@ -12,6 +12,7 @@ def candidates():
     override = os.environ.get('MATCHER_PYTHON')
     if override:
         yield override
+    yield str(BASE / '.runtime/python/bin/python3')
     yield str(BASE / '.model-venv/bin/python')
     for name in ['python3.12', 'python3.11', 'python3.13', 'python3.14', 'python3']:
         value = shutil.which(name)
@@ -45,18 +46,23 @@ def main():
         print('请先安装Python 3.12：https://www.python.org/downloads/')
         print('如已安装，可设置MATCHER_PYTHON为实际解释器路径后重试。')
         return 1
+    os.environ['PYTHONNOUSERSITE'] = '1'
     print('使用解释器：' + python, flush=True)
     if '--check' in sys.argv:
         return 0
     subprocess.run([python, str(BASE / 'verify_integrity.py')], cwd=BASE, check=True)
-    env_python = BASE / '.model-venv' / ('Scripts/python.exe' if os.name == 'nt' else 'bin/python')
+    bundled = BASE / '.runtime/python/bin/python3'
+    env_python = bundled if bundled.exists() else BASE / '.model-venv' / ('Scripts/python.exe' if os.name == 'nt' else 'bin/python')
     ready = env_python.exists() and (BASE / 'models/bge-small-zh-v1.5/model.safetensors').exists()
     if ready:
         ready = subprocess.run([str(env_python), '-c', 'import torch, transformers'],
                                capture_output=True).returncode == 0
     if not ready:
         subprocess.run([python, str(BASE / 'prepare_local.py')], cwd=BASE, check=True)
-    return subprocess.call([str(env_python), str(BASE / 'local_server.py')], cwd=BASE)
+    command = [str(env_python), str(BASE / 'local_server.py')]
+    if '--no-browser' in sys.argv:
+        command.append('--no-browser')
+    return subprocess.call(command, cwd=BASE)
 
 if __name__ == '__main__':
     raise SystemExit(main())

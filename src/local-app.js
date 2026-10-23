@@ -65,11 +65,11 @@
   try{
    const headers=['候选人','匹配部门','匹配岗位','面试官','专业','原始意向','反馈时间','来源工作表','原始行号','选中反馈原文','处理状态','版本水印','结果批次'];
    const batchId=crypto.randomUUID();
-   const rows=completed.map(r=>{const c=r.candidates.find(c=>c.index===r.selected);return [r.displayName,c?.department||'',c?.job||'',c?.interviewer||'',r.major,r.intent,c?.time||'',r.sheetName,r.row,c?.raw||'',c?'已自动选择':'无可用部门和岗位','贵毅_TUFE · 2.0.0+portfolio.1',batchId];});
+   const rows=completed.map(r=>{const c=r.candidates.find(c=>c.index===r.selected);return [r.displayName,c?.department||'',c?.job||'',c?.interviewer||'',r.major,r.intent,c?.time||'',r.sheetName,r.row,c?.raw||'',c?'已自动选择':'无可用部门和岗位','贵毅_TUFE · 2.0.0+portfolio.2',batchId];});
    const ws=XLSX.utils.aoa_to_sheet([headers,...rows]);ws['!cols']=[18,36,29,35,30,40,25,14,13,100,24,35,42].map(wch=>({wch}));
    ws['!autofilter']={ref:XLSX.utils.encode_range({s:{r:0,c:0},e:{r:rows.length,c:headers.length-1}})};
    const wb=XLSX.utils.book_new();wb.Props={Author:'贵毅_TUFE',Title:'岗位反馈匹配结果',Comments:'© 2026 贵毅_TUFE · '+batchId};XLSX.utils.book_append_sheet(wb,ws,'匹配结果');
-   XLSX.utils.book_append_sheet(wb,XLSX.utils.aoa_to_sheet([['程序信息','内容'],['署名','贵毅_TUFE'],['版本','2.0.0+portfolio.1'],['GitHub来源','https://github.com/liguiyi-hash/job-feedback-matcher'],['构建指纹',document.getElementById('build-fingerprint').textContent],['结果批次',batchId],['导出时间',new Date().toISOString()]]),'程序信息');
+   XLSX.utils.book_append_sheet(wb,XLSX.utils.aoa_to_sheet([['程序信息','内容'],['署名','贵毅_TUFE'],['版本','2.0.0+portfolio.2'],['GitHub来源','https://github.com/liguiyi-hash/job-feedback-matcher'],['构建指纹',document.getElementById('build-fingerprint').textContent],['结果批次',batchId],['导出时间',new Date().toISOString()]]),'程序信息');
    if(completed.length!==input.records.length)XLSX.utils.book_append_sheet(wb,XLSX.utils.aoa_to_sheet([['处理情况','已完成','总记录'],['部分完成，未处理记录未导出',completed.length,input.records.length]]),'处理情况');
    XLSX.writeFile(wb,completed.length===input.records.length?'候选人岗位匹配结果.xlsx':'候选人岗位匹配结果_部分完成.xlsx');
   }catch(e){error(e);}

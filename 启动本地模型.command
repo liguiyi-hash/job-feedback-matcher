@@ -1,7 +1,10 @@
 #!/bin/zsh
 # © 2026 贵毅_TUFE
 cd -- "${0:A:h}"
-task_bootstrap="$(command -v python3)"
+task_bootstrap="$PWD/.runtime/python/bin/python3"
+if [[ ! -x "$task_bootstrap" ]]; then
+  task_bootstrap="$(command -v python3)"
+fi
 if [[ ! -x "$task_bootstrap" ]]; then
   print '请先安装Python：https://www.python.org/downloads/'
   read -k 1

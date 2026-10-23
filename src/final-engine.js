@@ -25,5 +25,24 @@
   const peers=shortlist.filter(c=>c.job===top.job&&c.business===top.business);
   return {...result,selected:earliest(peers).index,reason:'语义补充排序，同岗位同业务取最早'};
  }
- const api={match,earliest,version:'2.0.0+portfolio.2'};root.FinalMatcher=api;if(typeof module!=='undefined')module.exports=api;
+ function explain(r){
+  const c=r.candidates.find(c=>c.index===r.selected),items=r.candidates.filter(c=>c.job&&c.department);
+  if(!c)return '反馈中没有可识别的部门和岗位，未生成匹配。';
+  const basis=r.basis?`依据${r.basisType}“${r.basis}”`:'未提供有效意向和专业';
+  const choice=`“${c.department}／${c.job}”`,time=c.timestamp===null?'按原文先后顺序选择':`选择最早有效反馈（${c.time}）`;
+  if(r.reason==='同名意向取最早'){
+   const same=items.filter(o=>E.normalize(o.job)===E.normalize(r.basis));
+   return `${basis}；反馈职位与意向名称一致${same.length>1?`，在${same.length}条同名反馈中${time}`:'，优先于其他职位'}，选定${choice}。`;
+  }
+  if(!r.basis)return `${basis}；在${items.length}条可用反馈中${time}，选定${choice}。`;
+  if(r.reason==='唯一可用反馈')return `${basis}；仅有1条可用反馈，直接保留${choice}，未进行多岗位比较。`;
+  if(r.reason==='明确职能或领域优先，同类取最早'){
+   const rule=E.matchRecord(r),assessed=rule.candidates.find(o=>o.index===c.index),max=Math.max(...rule.candidates.filter(o=>o.job&&o.department).map(o=>o.level));
+   const peers=rule.candidates.filter(o=>o.job&&o.department&&o.level===max);
+   return `${basis}；规则判断：${assessed.reason}${assessed.supplement?'（关联来自补充说明，输出仍为原反馈主岗位）':''}。${peers.length>1?`在${peers.length}条最高关联反馈中${time}，`:'优先该职能或领域，'}选定${choice}。`;
+  }
+  const peers=items.filter(o=>Object.hasOwn(r.scores||{},o.index)&&o.job===c.job&&o.business===c.business),compared=Object.keys(r.scores||{}).length;
+  return `${basis}；用本地语义模型比较${compared}条候选反馈的岗位、部门和业务，确定“${c.job}”方向${peers.length>1?`，再在同岗位同业务的反馈中${time}`:''}，选定${choice}。`;
+ }
+ const api={match,explain,earliest,version:'2.0.0+portfolio.3'};root.FinalMatcher=api;if(typeof module!=='undefined')module.exports=api;
 })(typeof globalThis!=='undefined'?globalThis:this);

@@ -11,3 +11,22 @@ test('未覆盖的新方向使用语义评分',async()=>{let called=false;const 
 test('不接受不完整模型响应',async()=>{const f=feedback.replaceAll('软件工程师','示例未知岗位');await assert.rejects(F.match({major:'',intent:'示例新方向',feedback:f},async()=>[]),/分数不完整/);});
 test('生成页面包含署名与构建指纹',()=>{const h=fs.readFileSync(path.join(__dirname,'../本地模型匹配.html'),'utf8');assert.ok(h.includes('贵毅_TUFE'));assert.ok(!h.includes('开发署名'));assert.ok(h.includes('owner-footer'));assert.ok(!h.includes('__BUILD_ID__'));assert.match(h, /id="build-fingerprint">[a-f0-9]{64}/);});
 
+test('解释覆盖选择路径并引用实际选中岗位，不改变结果',async()=>{
+ const acoustic='示例甲(2026-01-01 10:00:00):示例业务+示例一部+水声信号研究员+示例城市+示例甲\n示例乙(2026-01-02 10:00:00):示例业务+示例二部+海洋探测研究员+示例城市+示例乙';
+ const cases=[
+  [{intent:'软件工程师',major:'机械工程',feedback},/名称一致/],
+  [{intent:'',major:'',feedback},/未提供有效意向和专业.*最早有效反馈/],
+  [{intent:'示例新方向',major:'',feedback:feedback.split('\n')[0]},/仅有1条可用反馈.*未进行多岗位比较/],
+  [{intent:'前端开发',major:'',feedback:feedback.replace('软件工程师','前端研发工程师').replace('软件工程师','产品测试工程师')},/规则判断.*前端开发/],
+  [{intent:'水下声学研究',major:'',feedback:acoustic},/本地语义模型比较2条/],
+  [{intent:'软件工程师',major:'',feedback:''},/没有可识别的部门和岗位.*未生成匹配/],
+ ];
+ for(const [record,expected] of cases){
+  const r=await F.match(record,async(_b,options)=>options.map((_,i)=>i));
+  const before=JSON.stringify(r),explanation=F.explain(r);
+  assert.match(explanation,expected);assert.equal(JSON.stringify(r),before);
+  const selected=r.candidates.find(c=>c.index===r.selected);
+  if(selected)assert.ok(explanation.includes(`${selected.department}／${selected.job}`));
+ }
+});
+

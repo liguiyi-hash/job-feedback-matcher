@@ -16,7 +16,7 @@ for marker,name in parts:
     page=page.replace('/*__'+marker+'__*/',code)
 page=page.replace('__BUILD_ID__',build_id)
 (BASE/'本地模型匹配.html').write_text(page)
-manifest={'version':'2.0.0+portfolio.2','attribution':'贵毅_TUFE','build_id':build_id,'algorithm':'SHA-256','files':entries(BASE)}
+manifest={'version':'2.0.0+portfolio.3','attribution':'贵毅_TUFE','build_id':build_id,'algorithm':'SHA-256','files':entries(BASE)}
 (BASE/'integrity-manifest.json').write_text(json.dumps(manifest,ensure_ascii=False,indent=2)+'\n')
-print('构建完成：2.0.0+portfolio.2；署名：贵毅_TUFE；构建指纹：'+build_id)
+print('构建完成：2.0.0+portfolio.3；署名：贵毅_TUFE；构建指纹：'+build_id)
 
